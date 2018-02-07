@@ -1,0 +1,77 @@
+This is the history of all the slack chat that has taken place on the team data chanel.
+
+The structure is as follows:
+
+    - Each chanel has a directory
+    - Each date has one file within that chanel
+    - There are lists of messages in each file
+    - Each element of the list is a json object, with keys
+        - Type: usually message
+        - Subtype: can be something like file, but will be missing in the case when this is a normal message
+        - user: ID of the user, but no their actual name.
+        - text: normal form text of the message
+        - ts: epoch standard time stamp for the message
+    
+    example of a standard message:
+
+        {
+        "type": "message",
+        "user": "U06P2RVD0",
+        "text": "I've changed gis.py and managed to pass all  existing  tests now, Next week I would like to meet with someone <@U04N457C0> ? and have a chat about what could potentially go wrong, before pushing.",
+        "ts": "1437756398.000026"
+    }
+
+
+There are also two files at the top level called channels.json and users.json which give metadata about the channels and the users.
+
+The task is to take the message data and try to predict which user wrote the message.
+
+There are many users on this data channel, so let's restrict to those users who are very active:
+
+    - Chris Brooks
+    - Max Albert
+    - Simon Tudge
+    - Miguel Gonzales
+    - Guilherme Zagatti
+    - Luis Cappello
+
+## Step 1: clean
+
+Firstly, let's do some cleaning of the data. Remove all of those messages which are not from one of the above people. Get rid of messages that are not text messages, e.g. are file uploads etc. (essentially anything that has a subtype or a type != 'message').
+
+
+Glob all the files into one and load this data into a suitable format, probably a pandas dataframe with the columns. User, time_stamp, text.
+
+Note that the json does not contain the chanel, this is contained impmlicitly in the directory in which the message was written in. 
+
+## Step 2: Create some simple metrics
+
+These are meta-data metrics for each of the messages, that don't rely on the content of the data. They could be:
+
+    - Hour of the day
+    - Day of the week
+    - Message length (number of words)
+    - Average word length
+
+Investigate how one would deal with categorical data, or if we would need to transform this into a series of boolean variables, e.g. is_chanel_general, is_evening? etc. If so create these.
+
+## Step 3: summarise the data
+
+Take the total number of messages for each of our users. Who writes the most and who the least.
+Break down in terms of the metrics that we have. Who writes in the evenings, late at night, early in the morning etc.
+
+See if anything stand out.
+
+## Step 4: Simple ML algorithm
+
+Use a simple algorithm from sklearn to see if we can predict the author simply from metadata.
+
+Consider: PCA and normalisation. Follow the patern of the final project.
+
+## Step 5: Word frequency
+
+Extend the above to add word frequency. Count the frequency of certain words and use these to predict an author. Consider snowballing, removing stop words, not using all of the words etc. Use the bag of words approach with inverse document frequency thing.
+
+## Step 6: Summarise
+
+Summarise the results and write up a brief report.
